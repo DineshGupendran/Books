@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule, NgStyle } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { FormBuilder, FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { BooksService } from '../sevice/books.service';
 import { Book } from '../models/book.model';
@@ -10,8 +9,7 @@ import { TableModule } from 'primeng/table';
 import { Table } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-// import { BrowserModule } from '@angular/platform-browser';
+import swal from 'sweetalert';
 
 @Component({
   selector: 'app-booklist',
@@ -22,9 +20,7 @@ import { DialogModule } from 'primeng/dialog';
     CommonModule,
     TableModule,
     ButtonModule,
-    DialogModule,
-    // BrowserAnimationsModule,
-    // BrowserModule
+    DialogModule
   ],
   providers: [BooksService],
   templateUrl: './booklist.component.html',
@@ -49,18 +45,18 @@ export class BooklistComponent {
       title: new FormControl("", [Validators.required]),
       author: new FormControl("", [Validators.required, Validators.minLength(3)]),
       description: new FormControl(""),
-      publicationYear: new FormControl("", [Validators.required]),
+      publicationYear: new FormControl(new Date(), [Validators.required]),
       isbn: new FormControl("", [Validators.required, Validators.minLength(10)])
     })
   };
 
   navBook() {
     return {
-      'background': 'aqua',
+      'background': '#3e4571',
       'height': '80px',
       'font-size': '30px',
       'font-weight': 'bold',
-      'color': 'blueviolet'
+      'color': '#9652d5'
     }
   }
 
@@ -75,10 +71,6 @@ export class BooklistComponent {
       this.loading = false;
       console.log(this.allBooks, 'this.books')
     })
-  }
-
-  clear(table: Table) {
-    table.clear();
   }
 
   showDialog(action: string, bookValue: Book) {
@@ -98,18 +90,45 @@ export class BooklistComponent {
         title: new FormControl("", [Validators.required]),
         author: new FormControl("", [Validators.required, Validators.minLength(3)]),
         description: new FormControl(""),
-        publicationYear: new FormControl("", [Validators.required]),
+        publicationYear: new FormControl(new Date().toISOString(), [Validators.required]),
         isbn: new FormControl("", [Validators.required, Validators.minLength(10)])
       })
     }
   }
 
-  deleteProduct(book: Book) {
+  async deleteProduct(book: Book) {
     console.log(book, 'delete book');
-    this.bookService.removeBook(book.isbn).subscribe(res => {
-      console.log(res);
-    })
-    this.getAllBooks();
+    // swal({
+    //   title: "Are you sure?",
+    //   text: "Are you sure that you want to remove this book?",
+    //   icon: "warning",
+    //   dangerMode: true,
+    // })
+    //   .then(willDelete => {
+    //     if (willDelete) {
+    //       this.bookService.removeBook(book.isbn).subscribe(res => {
+    //         console.log(res);
+    //         this.loading = true;
+    //         this.getAllBooks();
+    //         swal("Deleted!", "Your book has been deleted!", "success");
+    //       })
+    //     }
+    //   });
+    const willDelete = await swal({
+      title: "Are you sure?",
+      text: "Are you sure that you want to delete this file?",
+      icon: "warning",
+      dangerMode: true,
+    });
+
+    if (willDelete) {
+      this.bookService.removeBook(book.isbn).subscribe(res => {
+        console.log(res);
+        this.loading = true;
+        this.getAllBooks();
+        swal("Deleted!", "Your book has been deleted!", "success");
+      })
+    }
   }
 
   onSubmit() {
@@ -118,15 +137,26 @@ export class BooklistComponent {
     console.log(this.bookForm.value);
     if (isFormValid) {
       if (this.action == 'add') {
-        this.bookService.createBook(this.bookForm.value).subscribe(res => {
+        this.bookService.createBook(this.bookForm.value).subscribe((res: any) => {
           console.log(res);
+          if (!res.stat && res.msg == "isbn exists") {
+            swal("Warning", "ISBN already exists!", "warning");
+          } else {
+            this.visible = false;
+            this.loading = true;
+            this.getAllBooks();
+            swal("Success", "Book was added!", "success");
+          }
         })
-      }else {
+      } else {
         this.bookService.updateBook(this.bookForm.value).subscribe(res => {
           console.log(res);
+          this.visible = false;
+          this.loading = true;
+          this.getAllBooks();
+            swal("Success", "Book was Updated!", "success");
         })
       }
-      this.getAllBooks();
     }
   }
 

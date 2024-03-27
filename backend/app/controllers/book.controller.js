@@ -4,7 +4,7 @@ module.exports = {
 
     createBook: (req, res) => {
         console.log(req.body, 'check');
-        User.findOne({ isbn: req.body.isbn })
+        Book.findOne({ isbn: req.body.isbn })
             .then(data => {
                 if (data) {
                     console.log("isbn exists");
@@ -58,6 +58,7 @@ module.exports = {
 
         Book.findOneAndUpdate({ isbn: isbn }, req.body, { useFindAndModify: false })
             .then(data => {
+                console.log('data', data);
                 if (!data) {
                     res.status(404).send({
                         message: `Cannot update Book with isbn=${isbn}. Maybe Book was not found!`

@@ -13,51 +13,54 @@
             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
             [globalFilterFields]="['title', 'author', 'isbn']">
             <ng-template pTemplate="caption">
-              <div class="flex">
-                <p-button (click)="showDialog('add', bookForm.value)" icon="pi pi-external-link" label="Add"></p-button>
-                <button pButton label="Clear" class="p-button-outlined" icon="pi pi-filter-slash"
-                  (click)="clear(dt1)"></button>
-                <span class="p-input-icon-left ml-auto">
-                  <i class="pi pi-search"></i>
-                  <input pInputText type="text" #textInput (input)="dt1.filterGlobal(textInput.value, 'contains')"
-                    placeholder="Search keyword" />
-                </span>
+              <div class="row">
+                <div class="col">
+                  <p-button (click)="showDialog('add', bookForm.value)" icon="pi pi-external-link"
+                    label="Add"></p-button>
+                </div>
+                <div class="col-auto">
+                  <span class="p-input-icon-left ml-auto">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text" class=" p-2" #textInput (input)="dt1.filterGlobal(textInput.value, 'contains')"
+                      placeholder="Search keyword" />
+                  </span>
+                </div>
               </div>
             </ng-template>
             <ng-template pTemplate="header">
               <tr>
-                <th style="min-width:15rem">
+                <th style="width:6rem">
                   <div class="flex align-items-center">
-                    titles
+                    Titles
                     <p-columnFilter type="text" field="title" display="menu"></p-columnFilter>
                   </div>
                 </th>
-                <th style="min-width:15rem">
+                <th style="width:6rem">
                   <div class="flex align-items-center">
-                    author
+                    Author
                     <p-columnFilter type="text" field="author" display="menu"></p-columnFilter>
                   </div>
                 </th>
-                <th style="min-width:15rem">
+                <th style="width:5rem">
                   <div class="flex align-items-center">
-                    description
-                    <p-columnFilter type="text" field="description" display="menu"></p-columnFilter>
-                  </div>
-                </th>
-                <th style="min-width:10rem">
-                  <div class="flex align-items-center">
-                    publicationYear
+                    PublicationYear
                     <p-columnFilter type="numeric" field="publicationYear" display="menu"
                       currency="USD"></p-columnFilter>
                   </div>
                 </th>
-                <th style="width: 3rem">
+                <th style="width: 6rem">
                   <div class="flex align-items-center">
-                    isbn
+                    ISBN
                     <p-columnFilter type="boolean" field="isbn" display="menu"></p-columnFilter>
                   </div>
                 </th>
-                <th style="width: 3rem">
+                <th style="width:10rem">
+                  <div class="flex align-items-center">
+                    Description
+                    <p-columnFilter type="text" field="description" display="menu"></p-columnFilter>
+                  </div>
+                </th>
+                <th style="width: 6rem">
                   <div class="flex align-items-center">
                     Actions
                     <p-columnFilter type="boolean" field="isbn" display="menu"></p-columnFilter>
@@ -73,19 +76,21 @@
                 <td>
                   <span class="ml-1 vertical-align-middle">{{ allBooks.author }}</span>
                 <td>
-                  <span class="ml-1 vertical-align-middle">{{ allBooks.description }}</span>
-                </td>
-                <td>
                   {{ allBooks.publicationYear | date: 'MM/dd/yyyy' }}
                 </td>
                 <td>
-                  {{ allBooks.isbn | currency: 'USD':'symbol' }}
+                  {{ allBooks.isbn }}
                 </td>
                 <td>
-                  <button pButton pRipple icon="pi pi-pencil" label="Edit"
-                    class="p-button-rounded p-button-success mr-2" (click)="showDialog('update', allBooks)"></button>
-                  <button pButton pRipple icon="pi pi-trash" label="Delete" class="p-button-rounded p-button-warning"
-                    (click)="deleteProduct(allBooks)"></button>
+                  <span class="ml-1 vertical-align-middle">{{ allBooks.description }}</span>
+                </td>
+                <td>
+                  <span><i class="bi bi-pen-fill m-2 edit-delete" style="background: #42cd45; color: #dce8de;" (click)="showDialog('update', allBooks)"></i></span>
+                  <!-- <button pButton pRipple icon="pi pi-pencil" label="Edit"
+                    class="p-button-rounded p-button-success mr-2" (click)="showDialog('update', allBooks)"></button> -->
+                  <!-- <button pButton pRipple icon="pi pi-trash" label="Delete" class="p-button-rounded p-button-warning"
+                    (click)="deleteProduct(allBooks)"></button> -->
+                    <span><i class="bi bi-trash3-fill edit-delete" style="background: #e24c4c; color: #dce8de;" (click)="deleteProduct(allBooks)"></i></span>
                 </td>
 
               </tr>
@@ -101,52 +106,66 @@
           <p-dialog header="Header" [(visible)]="visible" [modal]="true" [style]="{ width: '50rem' }"
             [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
             <ng-template pTemplate="header">
-              <div class="inline-flex align-items-center justify-content-center gap-2">
+              <h4 class="inline-flex align-items-center justify-content-center gap-2">
                 <span class="font-bold white-space-nowrap">{{action=='add'? 'Add new Book' : 'Update Book'}}</span>
-              </div>
+              </h4>
             </ng-template>
 
             <from class="row g-3 needs-validation" [formGroup]="bookForm">
-              <div class="col-md-4">
-                <label class="from-label">Title</label>
-                <input type="text" class="from-control" formControlName="title">
-                <div class="text-danger"
-                  *ngIf="bookForm.controls['title'].invalid && (isFormSubmitted || bookForm.controls['title'].touched || bookForm.controls['title'].dirty)">
-                  <span *ngIf="bookForm.controls['title'].errors?.['required']">This is required</span>
+              <div class="col-md-6">
+                <div class="row">
+                  <label class="from-label">Title</label>
+                  <input type="text" class="from-control col-10 ms-3" formControlName="title">
+                  <div class="text-danger"
+                    *ngIf="bookForm.controls['title'].invalid && (isFormSubmitted || bookForm.controls['title'].touched || bookForm.controls['title'].dirty)">
+                    <span *ngIf="bookForm.controls['title'].errors?.['required']">This is required</span>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <label class="from-label">Author</label>
-                <input type="text" class="from-control" formControlName="author">
-                <div class="text-danger"
-                  *ngIf="bookForm.controls['author'].invalid && (isFormSubmitted || bookForm.controls['author'].touched || bookForm.controls['author'].dirty)">
-                  <span *ngIf="bookForm.controls['author'].errors?.['required']">This is required</span>
-                  <span *ngIf="bookForm.controls['author'].errors?.['minlength']">Min 4 characters required</span>
+              <div class="col-md-6">
+                <div class="row">
+                  <label class="from-label">Author</label>
+                  <input type="text" class="from-control col-10 ms-3" formControlName="author">
+                  <div class="text-danger"
+                    *ngIf="bookForm.controls['author'].invalid && (isFormSubmitted || bookForm.controls['author'].touched || bookForm.controls['author'].dirty)">
+                    <span *ngIf="bookForm.controls['author'].errors?.['required']">This is required</span>
+                    <span *ngIf="bookForm.controls['author'].errors?.['minlength']">Min 4 characters required</span>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <label class="from-label">Description</label>
-                <input type="text" class="from-control" formControlName="description">
-              </div>
-              <div class="col-md-4">
-                <label class="from-label">PublicationYear</label>
-                <input type="date" class="from-control" formControlName="publicationYear">
-                <div class="text-danger"
-                  *ngIf="bookForm.controls['publicationYear'].invalid && (isFormSubmitted || bookForm.controls['publicationYear'].touched || bookForm.controls['publicationYear'].dirty)">
-                  <span *ngIf="bookForm.controls['publicationYear'].errors?.['required']">This is required</span>
+              <div class="col-md-6">
+                <div class="row">
+                  <label class="from-label">PublicationYear</label>
+                  <input type="date" class="from-control col-10 ms-3" formControlName="publicationYear">
+                  <div class="text-danger"
+                    *ngIf="bookForm.controls['publicationYear'].invalid && (isFormSubmitted || bookForm.controls['publicationYear'].touched || bookForm.controls['publicationYear'].dirty)">
+                    <span *ngIf="bookForm.controls['publicationYear'].errors?.['required']">This is required</span>
+                  </div>
                 </div>
               </div>
-              <div class="col-md-4">
-                <label class="from-label">ISBN</label>
-                <input type="number" class="from-control" [readOnly]="action=='update'" formControlName="isbn">
-                <div class="text-danger"
-                  *ngIf="bookForm.controls['isbn'].invalid && (isFormSubmitted || bookForm.controls['isbn'].touched || bookForm.controls['isbn'].dirty)">
-                  <span *ngIf="bookForm.controls['isbn'].errors?.['required']">This is required</span>
-                  <span *ngIf="bookForm.controls['author'].errors?.['minlength']">Min 4 characters required</span>
+              <div class="col-md-6">
+                <div class="row">
+                  <label class="from-label">ISBN</label>
+                  <input type="number" class="from-control col-10 ms-3" [readOnly]="action=='update'"
+                    formControlName="isbn">
+                  <div class="text-danger"
+                    *ngIf="bookForm.controls['isbn'].invalid && (isFormSubmitted || bookForm.controls['isbn'].touched || bookForm.controls['isbn'].dirty)">
+                    <span *ngIf="bookForm.controls['isbn'].errors?.['required']">This is required</span>
+                    <span *ngIf="bookForm.controls['author'].errors?.['minlength']">Min 4 characters required</span>
+                  </div>
                 </div>
               </div>
-              <p-button icon="pi pi-check" label="{{action}}" (click)="onSubmit()" pAutoFocus
-                [autofocus]="true"></p-button>
+              <div class="col-md-12">
+                <div class="row">
+                  <label class="from-label">Description</label>
+                  <textarea rows="2" style="width: 92%;" class="from-control col-12 ms-3"
+                    formControlName="description"></textarea>
+                </div>
+              </div>
+              <div class="row">
+                <p-button class="mt-4 row-cols-1" icon="pi pi-check" label="{{action=='add'? 'Add': 'Update'}}" (click)="onSubmit()" pAutoFocus
+                  [autofocus]="true"></p-button>
+              </div>
             </from>
           </p-dialog>
         </ng-container>
