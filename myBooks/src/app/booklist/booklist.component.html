@@ -86,10 +86,6 @@
                 </td>
                 <td>
                   <span><i class="bi bi-pen-fill m-2 edit-delete" style="background: #42cd45; color: #dce8de;" (click)="showDialog('update', allBooks)"></i></span>
-                  <!-- <button pButton pRipple icon="pi pi-pencil" label="Edit"
-                    class="p-button-rounded p-button-success mr-2" (click)="showDialog('update', allBooks)"></button> -->
-                  <!-- <button pButton pRipple icon="pi pi-trash" label="Delete" class="p-button-rounded p-button-warning"
-                    (click)="deleteProduct(allBooks)"></button> -->
                     <span><i class="bi bi-trash3-fill edit-delete" style="background: #e24c4c; color: #dce8de;" (click)="deleteProduct(allBooks)"></i></span>
                 </td>
 
@@ -97,7 +93,7 @@
             </ng-template>
             <ng-template pTemplate="emptymessage">
               <tr>
-                <td colspan="7">No customers found.</td>
+                <td colspan="7">No books found.</td>
               </tr>
             </ng-template>
           </p-table>

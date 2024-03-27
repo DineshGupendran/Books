@@ -6,7 +6,6 @@ import { BooksService } from '../sevice/books.service';
 import { Book } from '../models/book.model';
 
 import { TableModule } from 'primeng/table';
-import { Table } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
 import swal from 'sweetalert';
@@ -66,10 +65,8 @@ export class BooklistComponent {
 
   getAllBooks() {
     this.bookService.getAllBooks().subscribe((res: any) => {
-      console.log(res, 'res');
       this.allBooks = res.books;
       this.loading = false;
-      console.log(this.allBooks, 'this.books')
     })
   }
 
@@ -97,23 +94,6 @@ export class BooklistComponent {
   }
 
   async deleteProduct(book: Book) {
-    console.log(book, 'delete book');
-    // swal({
-    //   title: "Are you sure?",
-    //   text: "Are you sure that you want to remove this book?",
-    //   icon: "warning",
-    //   dangerMode: true,
-    // })
-    //   .then(willDelete => {
-    //     if (willDelete) {
-    //       this.bookService.removeBook(book.isbn).subscribe(res => {
-    //         console.log(res);
-    //         this.loading = true;
-    //         this.getAllBooks();
-    //         swal("Deleted!", "Your book has been deleted!", "success");
-    //       })
-    //     }
-    //   });
     const willDelete = await swal({
       title: "Are you sure?",
       text: "Are you sure that you want to delete this file?",
@@ -123,7 +103,6 @@ export class BooklistComponent {
 
     if (willDelete) {
       this.bookService.removeBook(book.isbn).subscribe(res => {
-        console.log(res);
         this.loading = true;
         this.getAllBooks();
         swal("Deleted!", "Your book has been deleted!", "success");
@@ -134,11 +113,9 @@ export class BooklistComponent {
   onSubmit() {
     const isFormValid = this.bookForm.valid;
     this.isFormSubmitted = true;
-    console.log(this.bookForm.value);
     if (isFormValid) {
       if (this.action == 'add') {
         this.bookService.createBook(this.bookForm.value).subscribe((res: any) => {
-          console.log(res);
           if (!res.stat && res.msg == "isbn exists") {
             swal("Warning", "ISBN already exists!", "warning");
           } else {
@@ -150,7 +127,6 @@ export class BooklistComponent {
         })
       } else {
         this.bookService.updateBook(this.bookForm.value).subscribe(res => {
-          console.log(res);
           this.visible = false;
           this.loading = true;
           this.getAllBooks();
